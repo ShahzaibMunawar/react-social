@@ -1,17 +1,22 @@
-import React, { Component }  from 'react';
-import './App.css';
-import CustomForm from './Form/my-form';
-import MovieApp from './Form/my-form-2';
-import MySocialApp from './Form/MySocialApp';
-import './tailwind.css';
+import React from "react";
+// import CustomForm from "./Form/my-form";
+// import MovieApp from "./Form/my-form-2";
+import AppUiDesign from "./Form/MySocialApp";
+import {
+  QueryClient,
+  QueryClientProvider,
+} from "react-query";
+import "./App.css";
 
-
+const queryClient = new QueryClient();
 function App() {
+  
   return (
     <div className="App">
-        <MySocialApp/>
+      <QueryClientProvider client={queryClient}>
+      <AppUiDesign />
+      </QueryClientProvider>
     </div>
-    
   );
 }
 
