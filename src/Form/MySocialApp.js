@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
@@ -13,20 +13,26 @@ import { useQuery } from "react-query";
 function AppUiDesign() {
   const [expandedPostID, setExpandedPostID] = useState(-1);
 
-  const { isLoading, error, data = [] } = useQuery("repoData", (e) => {
+  const {
+    isLoading,
+    error,
+    data = [],
+  } = useQuery("repoData", (e) => {
     return fetch("https://jsonplaceholder.typicode.com/posts").then((res) =>
       res.json()
     );
   });
+  useEffect(() => {
+    console.log("hello ali");
+  }, [expandedPostID]);
 
-  const {
-    isLoading: isCommentsLoading,
-    data: postCommentsData = [],
-  } = useQuery(["commentsData", expandedPostID], (e) => {
-    return fetch(
-      `https://jsonplaceholder.typicode.com/posts/${e.queryKey[1]}/comments`
-    ).then((res) => res.json());
-  });
+  const { isLoading: isCommentsLoading, data: postCommentsData = [] } =
+    useQuery(["commentsData", expandedPostID], (e) => {
+      console.log(e);
+      return fetch(
+        `https://jsonplaceholder.typicode.com/posts/${e.queryKey[1]}/comments`
+      ).then((res) => res.json());
+    });
 
   if (isLoading) return "Loading...";
 
@@ -39,7 +45,14 @@ function AppUiDesign() {
   return (
     <Box sx={{ flexGrow: 1 }} justifyItems={"center"} justifyContent="center">
       <Grid container spacing={2} justifyContent="center">
-        <Grid justifyContent={"center"} textAlign="center" item xs={2} sm={4} md={4}>
+        <Grid
+          justifyContent={"center"}
+          textAlign="center"
+          item
+          xs={2}
+          sm={4}
+          md={4}
+        >
           {data.map((post) => (
             <Card key={post.id}>
               <CardContent>
@@ -75,6 +88,7 @@ function AppUiDesign() {
                         <Fragment key={`${item.id}${item.postId}`}>
                           <Typography paragraph>{item.name}</Typography>
                           <Typography paragraph>{item.email}</Typography>
+
                           <Typography paragraph>{item.email}</Typography>
                         </Fragment>
                       ))
