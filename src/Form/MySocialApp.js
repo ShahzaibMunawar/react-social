@@ -1,17 +1,21 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useState } from "react";
+import { Route, Routes } from "react-router-dom";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
+import ButtonBase from "@mui/material/ButtonBase";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Collapse from "@mui/material/Collapse";
+import { Link } from "react-router-dom";
 
 import { useQuery } from "react-query";
 
-function AppUiDesign() {
+export function MySocialApp(props) {
   const [expandedPostID, setExpandedPostID] = useState(-1);
+  const [expanded, setExpanded] = useState(false);
 
   const {
     isLoading,
@@ -22,9 +26,6 @@ function AppUiDesign() {
       res.json()
     );
   });
-  useEffect(() => {
-    console.log("hello ali");
-  }, [expandedPostID]);
 
   const { isLoading: isCommentsLoading, data: postCommentsData = [] } =
     useQuery(["commentsData", expandedPostID], (e) => {
@@ -40,6 +41,7 @@ function AppUiDesign() {
 
   const loadComments = (postID) => {
     setExpandedPostID(postID);
+    setExpanded(!expanded);
   };
 
   return (
@@ -55,14 +57,21 @@ function AppUiDesign() {
         >
           {data.map((post) => (
             <Card key={post.id}>
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                  {post.title}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {post.body}
-                </Typography>
-              </CardContent>
+              <ButtonBase
+                disableTouchRipple={true}
+                component={Link}
+                to={`/posts/${post.id}`}
+              >
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="div">
+                    {post.title}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {post.body}
+                  </Typography>
+                </CardContent>
+              </ButtonBase>
+
               <CardActions>
                 <Button size="small">Like</Button>
                 <Button
@@ -88,8 +97,7 @@ function AppUiDesign() {
                         <Fragment key={`${item.id}${item.postId}`}>
                           <Typography paragraph>{item.name}</Typography>
                           <Typography paragraph>{item.email}</Typography>
-
-                          <Typography paragraph>{item.email}</Typography>
+                          <Typography paragraph>{item.body}</Typography>
                         </Fragment>
                       ))
                     : "loading"}
@@ -103,4 +111,4 @@ function AppUiDesign() {
   );
 }
 
-export default AppUiDesign;
+export default MySocialApp;
