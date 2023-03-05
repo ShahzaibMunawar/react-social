@@ -5,10 +5,12 @@ import { SinglePost } from "./Form/SinglePost";
 
 function SocialRoutes() {
   return (
-    <Routes>
-      <Route path="/" element={<MySocialApp />} />
-      <Route path="/posts/:id" element={<SinglePost />} />
-    </Routes>
+    <Fragment>
+      <Routes>
+        <Route path="/" element={<MySocialApp />} />
+        <Route path="/posts/:id" element={<SinglePost />} />
+      </Routes>
+    </Fragment>
   );
 }
 

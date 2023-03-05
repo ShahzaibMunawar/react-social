@@ -29,7 +29,7 @@ export function SinglePost(props) {
   if (isPostLoading) {
     return "Loading Posts ...";
   }
-  console.log(data);
+  // console.log(data);
   return (
     <>
       <Box sx={{ flexGrow: 1 }} justifyItems={"center"} justifyContent="center">
@@ -47,12 +47,7 @@ export function SinglePost(props) {
               <CardContent>
                 <Typography variant="h5" component="div"></Typography>
                 <Typography color="text.secondary">{data.title}</Typography>
-                <Typography variant="body2">
-                  {data.body}
-
-                  <br />
-                  {'"a benevolent smile"'}
-                </Typography>
+                <Typography variant="body2">{data.body}</Typography>
               </CardContent>
               <CardActions>
                 <Button size="small">Like</Button>

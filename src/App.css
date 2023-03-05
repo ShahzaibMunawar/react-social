@@ -1,18 +1,26 @@
 .App {
- display: flex;
+  display: flex;
 }
 
-table, th, td {
+table,
+th,
+td {
   border: 1px solid black;
 }
 
-.column{
+.column {
   display: flex;
   flex-direction: row;
 }
 .App-logo {
   height: 40vmin;
   pointer-events: none;
+}
+
+.nav-btn {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 15px;
 }
 
 @media (prefers-reduced-motion: no-preference) {
