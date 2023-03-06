@@ -34,16 +34,6 @@ export function MySocialApp(props) {
     keepPreviousData: true,
   });
 
-  // const {
-  //   isLoading,
-  //   error,
-  //   data = [],
-  // } = useQuery("repoData", (e) => {
-  //   return fetch("https://jsonplaceholder.typicode.com/posts").then((res) =>
-  //     res.json()
-  //   );
-  // });
-
   const { isLoading: isCommentsLoading, data: postCommentsData = [] } =
     useQuery(["commentsData", expandedPostID], (e) => {
       return fetch(
