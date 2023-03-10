@@ -9,14 +9,21 @@ import { useTheme, ThemeProvider, createTheme } from "@mui/material/styles";
 import Brightness4 from "@mui/icons-material/Brightness4";
 import Brightness7 from "@mui/icons-material/Brightness7";
 import IconButton from "@mui/material/IconButton";
+import { createSlice } from "@reduxjs/toolkit";
+import { useSelector, useDispatch } from "react-redux";
+import { changeMode } from "./ToggleThemeSlice";
 
 export function MySocialApp(props) {
-  const [darkMode, setDarkMode] = useState(false);
-  const theme = createTheme({
-    palette: {
-      mode: darkMode ? "dark" : "light",
-    },
-  });
+  // call redux data from store with useSelector
+  // const themeValue = useSelector((state) => state.taggleTheme.value);
+  const dispatch = useDispatch();
+  // console.log("themeValue=", themeValue);
+
+  // const theme = createTheme({
+  //   palette: {
+  //     mode: themeValue ? "dark" : "light",
+  //   },
+  // });
 
   const [expandedPostID, setExpandedPostID] = useState(-1);
   const [expanded, setExpanded] = useState(false);
@@ -55,60 +62,50 @@ export function MySocialApp(props) {
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <Box sx={{ flexGrow: 1 }} justifyItems={"center"} justifyContent="center">
-        <Grid container spacing={2} justifyContent="center">
-          <Grid
-            justifyContent={"center"}
-            textAlign="center"
-            item
-            xs={2}
-            sm={4}
-            md={4}
-          >
-            <Box className="nav-btn">
-              <Button
-                variant="outlined"
-                onClick={prevPage}
-                disabled={page === 1}
-              >
-                Prev Page
-              </Button>
-              <IconButton
-                id="dark-mode"
-                onClick={() => {
-                  setDarkMode(!darkMode);
-                }}
-              >
-                {theme.palette.mode === "dark" ? (
-                  <Brightness7 />
-                ) : (
-                  <Brightness4 />
-                )}
-              </IconButton>
-              <Button
-                variant="outlined"
-                onClick={nextPage}
-                disabled={!posts.length}
-              >
-                Next Page
-              </Button>
-            </Box>
+    <Box sx={{ flexGrow: 1 }} justifyItems={"center"} justifyContent="center">
+      <Grid container spacing={2} justifyContent="center">
+        <Grid
+          justifyContent={"center"}
+          textAlign="center"
+          item
+          xs={2}
+          sm={4}
+          md={4}
+        >
+          <Box className="nav-btn">
+            <Button variant="outlined" onClick={prevPage} disabled={page === 1}>
+              Prev Page
+            </Button>
+            <IconButton
+              id="dark-mode"
+              onClick={() => {
+                dispatch(changeMode());
+              }}
+            >
+              <Brightness7 />
+            </IconButton>
+            <Button
+              variant="outlined"
+              onClick={nextPage}
+              disabled={!posts.length}
+            >
+              Next Page
+            </Button>
+          </Box>
 
-            {posts.map((post) => (
-              <SocialCardComponent
-                key={post.id}
-                expandedPostID={expandedPostID}
-                isCommentsLoading={isCommentsLoading}
-                loadComments={loadComments}
-                postCommentsData={postCommentsData}
-                post={post}
-              ></SocialCardComponent>
-            ))}
-          </Grid>
+          {posts.map((post) => (
+            <SocialCardComponent
+              key={post.id}
+              expandedPostID={expandedPostID}
+              isCommentsLoading={isCommentsLoading}
+              loadComments={loadComments}
+              postCommentsData={postCommentsData}
+              post={post}
+            ></SocialCardComponent>
+          ))}
         </Grid>
-      </Box>
-    </ThemeProvider>
+      </Grid>
+    </Box>
   );
 }
 
