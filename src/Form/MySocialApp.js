@@ -1,87 +1,107 @@
 import React, { Fragment, useState } from "react";
-import Button from "@mui/material/Button";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import Collapse from "@mui/material/Collapse";
-
+import Button from "@mui/material/Button";
 import { useQuery } from "react-query";
+import { getPostsPage } from "../api/SocialAPI";
+import SocialCardComponent from "./CustomComponents/SocialCardComponent";
+import { useTheme, ThemeProvider, createTheme } from "@mui/material/styles";
+import Brightness4 from "@mui/icons-material/Brightness4";
+import Brightness7 from "@mui/icons-material/Brightness7";
+import IconButton from "@mui/material/IconButton";
+import { createSlice } from "@reduxjs/toolkit";
+import { useSelector, useDispatch } from "react-redux";
+import { changeMode } from "./ToggleThemeSlice";
 
-function AppUiDesign() {
+export function MySocialApp(props) {
+  // call redux data from store with useSelector
+  // const themeValue = useSelector((state) => state.taggleTheme.value);
+  const dispatch = useDispatch();
+  // console.log("themeValue=", themeValue);
+
+  // const theme = createTheme({
+  //   palette: {
+  //     mode: themeValue ? "dark" : "light",
+  //   },
+  // });
+
   const [expandedPostID, setExpandedPostID] = useState(-1);
+  const [expanded, setExpanded] = useState(false);
 
-  const { isLoading, error, data = [] } = useQuery("repoData", (e) => {
-    return fetch("https://jsonplaceholder.typicode.com/posts").then((res) =>
-      res.json()
-    );
-  });
+  const [page, setPage] = useState(2);
 
   const {
-    isLoading: isCommentsLoading,
-    data: postCommentsData = [],
-  } = useQuery(["commentsData", expandedPostID], (e) => {
-    return fetch(
-      `https://jsonplaceholder.typicode.com/posts/${e.queryKey[1]}/comments`
-    ).then((res) => res.json());
+    isLoading: isPostLoading,
+    isError: isPostError,
+    error: iserror,
+    data: posts,
+    isFetching,
+    isPreviousData,
+  } = useQuery(["/posts", page], () => getPostsPage(page), {
+    keepPreviousData: true,
   });
 
-  if (isLoading) return "Loading...";
+  const { isLoading: isCommentsLoading, data: postCommentsData = [] } =
+    useQuery(["commentsData", expandedPostID], (e) => {
+      return fetch(
+        `https://jsonplaceholder.typicode.com/posts/${e.queryKey[1]}/comments`
+      ).then((res) => res.json());
+    });
 
-  if (error) return "An error has occurred: " + error.message;
+  if (isPostLoading) return "Loading...";
+
+  if (iserror) return "An error has occurred: " + iserror.message;
+
+  const nextPage = () => setPage((prev) => prev + 1);
+
+  const prevPage = () => setPage((prev) => prev - 1);
 
   const loadComments = (postID) => {
     setExpandedPostID(postID);
+    setExpanded(!expanded);
   };
 
   return (
     <Box sx={{ flexGrow: 1 }} justifyItems={"center"} justifyContent="center">
       <Grid container spacing={2} justifyContent="center">
-        <Grid justifyContent={"center"} textAlign="center" item xs={2} sm={4} md={4}>
-          {data.map((post) => (
-            <Card key={post.id}>
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                  {post.title}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {post.body}
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button size="small">Like</Button>
-                <Button
-                  size="small"
-                  onClick={() => loadComments(post.id)}
-                  expand={post.id === expandedPostID}
-                  aria-expanded={post.id === expandedPostID}
-                  aria-label="show more"
-                  key={post.id}
-                >
-                  Comments
-                </Button>
-              </CardActions>
+        <Grid
+          justifyContent={"center"}
+          textAlign="center"
+          item
+          xs={2}
+          sm={4}
+          md={4}
+        >
+          <Box className="nav-btn">
+            <Button variant="outlined" onClick={prevPage} disabled={page === 1}>
+              Prev Page
+            </Button>
+            <IconButton
+              id="dark-mode"
+              onClick={() => {
+                dispatch(changeMode());
+              }}
+            >
+              <Brightness7 />
+            </IconButton>
+            <Button
+              variant="outlined"
+              onClick={nextPage}
+              disabled={!posts.length}
+            >
+              Next Page
+            </Button>
+          </Box>
 
-              <Collapse
-                in={post.id === expandedPostID}
-                timeout="auto"
-                unmountOnExit
-              >
-                <CardContent>
-                  {!isCommentsLoading
-                    ? postCommentsData.map((item) => (
-                        <Fragment key={`${item.id}${item.postId}`}>
-                          <Typography paragraph>{item.name}</Typography>
-                          <Typography paragraph>{item.email}</Typography>
-                          <Typography paragraph>{item.email}</Typography>
-                        </Fragment>
-                      ))
-                    : "loading"}
-                </CardContent>
-              </Collapse>
-            </Card>
+          {posts.map((post) => (
+            <SocialCardComponent
+              key={post.id}
+              expandedPostID={expandedPostID}
+              isCommentsLoading={isCommentsLoading}
+              loadComments={loadComments}
+              postCommentsData={postCommentsData}
+              post={post}
+            ></SocialCardComponent>
           ))}
         </Grid>
       </Grid>
@@ -89,4 +109,4 @@ function AppUiDesign() {
   );
 }
 
-export default AppUiDesign;
+export default MySocialApp;
